@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/etGlumacIme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ime glumca"
+                android:inputType="text"/>
+
+            <EditText
+                android:id="@+id/etGlumacDatumRodjenja"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="datum rodjenja glumca"
+                android:inputType="text"/>
+
+            <Button
+                android:id="@+id/btnGlumac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_green_dark"
+                android:text="Dodaj glumca" />
+
+            <Button
+                android:id="@+id/btnAzurirajGlumca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:text="Azuriraj glumca" />
+
+            <Button
+                android:id="@+id/btnIzbrisiGlumca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="Izbrisi glumca" />
+
+            <Spinner
+                android:id="@+id/spnActors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="48dp" />
+
+            <EditText
+                android:id="@+id/etRediteljIme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ime reditelja"
+                android:inputType="text"/>
+
+            <EditText
+                android:id="@+id/etRediteljDatumRodjenja"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="datum rodjenja reditelja"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/btnReditelj"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_green_dark"
+                android:text="Dodaj reditelja" />
+
+            <Button
+                android:id="@+id/btnAzurirajReditelja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:text="Azuriraj reditelja" />
+
+            <Button
+                android:id="@+id/btnIzbrisiReditelja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="Izbrisi reditelja" />
+
+            <Spinner
+                android:id="@+id/spnDirectors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="48dp" />
+
+            <EditText
+                android:id="@+id/etFilmIme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ime filma"
+                android:inputType="text"/>
+
+            <EditText
+                android:id="@+id/etDatumIzlaskaFilma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="datum izlaska filma"
+                android:inputType="text"/>
+
+            <Spinner
+                android:id="@+id/spnReditelji"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnFilm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_green_dark"
+                android:text="Dodaj film" />
+
+            <Button
+                android:id="@+id/btnAzurirajFilm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:text="Azuriraj film" />
+
+            <Button
+                android:id="@+id/btnIzbrisiFilm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="Izbrisi film" />
+
+            <Spinner
+                android:id="@+id/spnMovies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="68dp" />
+
+            <Button
+                android:id="@+id/btnDeleteDatabase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="68dp"
+                android:text="Clear Database" />
+
+            <Button
+                android:id="@+id/btnActorsInMovie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="68dp"
+                android:text="Find Actors" />
+
+            <Button
+                android:id="@+id/btnRestoreDatabase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Restore database" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
