@@ -128,6 +128,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp" />
 
+            <EditText
+                android:id="@+id/etGlumciZaFilm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="glumci u filmu"
+                android:inputType="text"/>
+
             <Button
                 android:id="@+id/btnFilm"
                 android:layout_width="wrap_content"

@@ -206,6 +206,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ac;
     }
 
+    public Actor getActor(String actor_name) {
+
+        String selectQuery = "SELECT * FROM " + TABLE_ACTORS + " WHERE "
+                + KEY_NAME + " = " + actor_name;
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        //create actor based on data read from a database
+        Actor ac = new Actor();
+        ac.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+        ac.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+        ac.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
+
+        return ac;
+    }
+
 
     /*
      * Updating an Actor using data in an object actor
@@ -246,6 +267,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(director_id) });
     }
 
+    public void deleteMovie(long movie_id){
+        db.delete(TABLE_MOVIE_ACTORS, KEY_MOVIE_ID + " = ?",
+                new String[] { String.valueOf(movie_id) });
+
+        db.delete(TABLE_MOVIES, KEY_ID + " = ?",
+                new String[] { String.valueOf(movie_id) });
+    }
+
 
     /*
      * get single director like
@@ -255,6 +284,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String selectQuery = "SELECT * FROM " + TABLE_DIRECTORS + " WHERE "
                 + KEY_ID + " = " + director_id;
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        Director d = new Director();
+        d.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+        d.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+        d.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
+
+        return d;
+    }
+
+    public Director getDirector(String director_name) {
+
+        String selectQuery = "SELECT * FROM " + TABLE_DIRECTORS + " WHERE "
+                + KEY_NAME + " = " + director_name;
 
         Log.e(LOG, selectQuery);
 

@@ -9,9 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import uns.ftn.deet.kel.moviesdatabase.sqlite.helper.DatabaseHelper;
 import uns.ftn.deet.kel.moviesdatabase.sqlite.model.Actor;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText etImeFilma;
     EditText etDatumFilma;
+    EditText etGlumciUFilmu;
 
     Spinner spnActors;
     Spinner spnDirectors;
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         etImeFilma = (EditText) findViewById(R.id.etFilmIme);
         etDatumFilma = (EditText) findViewById(R.id.etDatumIzlaskaFilma);
+        etGlumciUFilmu = (EditText) findViewById(R.id.etGlumciZaFilm);
 
         spnActors = (Spinner) findViewById(R.id.spnActors);
         spnDirectors = (Spinner) findViewById(R.id.spnDirectors);
@@ -222,7 +227,102 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*btnDeleteDatabase = (Button) findViewById(R.id.btnDeleteDatabase);
+        btnDodajFilm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!etImeFilma.getText().toString().equals("") && !etDatumFilma.getText().toString().equals("") && spnIzborReditelja.getSelectedItem() != null && !etGlumciUFilmu.getText().toString().equals("")){
+                    Movie m = new Movie(etImeFilma.getText().toString(), etDatumFilma.getText().toString());
+                    Director d = null;
+                    for(Director director : ld){
+                        if(director.getName().equals(spnIzborReditelja.getSelectedItem().toString())){
+                            d = director;
+                            break;
+                        }
+                    }
+
+                    m.setDirector(d);
+                    databaseHelper.createMovie(m);
+                    if(etGlumciUFilmu.getText().toString().contains(" ")){
+                        Pattern pattern = Pattern.compile(" ");
+                        Matcher matcher = pattern.matcher(etGlumciUFilmu.getText().toString());
+                        int count = 0;
+                        while (matcher.find()) {
+                            count++;
+                        }
+
+                        int i = 0;
+
+                        for(Actor actor : la){
+                            if(i == count + 1)
+                                break;
+
+                            if(actor.getName().equals(etGlumciUFilmu.getText().toString().split(" ")[i])){
+                                m.addActor(actor);
+                                i++;
+                            }
+                        }
+
+                        databaseHelper.addActorsInMovie(m);
+                    }
+                    else{
+                        for(Actor actor : la){
+                            if(actor.getName().equals(etGlumciUFilmu.getText().toString())){
+                                m.addActor(actor);
+                                break;
+                            }
+                        }
+
+                        databaseHelper.addActorsInMovie(m);
+                    }
+                    etGlumciUFilmu.setText("");
+
+                    mv = databaseHelper.getAllMovies();
+                    loadSpinnerDataMovies((ArrayList<Movie>) mv);
+                }
+            }
+        });
+
+        btnIzbrisiFilm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseHelper.deleteMovie(film.getId());
+                mv = databaseHelper.getAllMovies();
+                loadSpinnerDataMovies((ArrayList<Movie>) mv);
+                etImeFilma.setText("");
+                etDatumFilma.setText("");
+                etGlumciUFilmu.setText("");
+            }
+        });
+
+        spnMovies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                film = mv.get(position);
+                etImeFilma.setText(film.getName());
+                etDatumFilma.setText(film.getReleaseDate());
+                spnIzborReditelja.setSelection((int) film.getDirector().getId() - 1);
+
+                List<Actor> l = databaseHelper.getAllActorsInMovie(film.getName());
+
+                if(l.size() == 1)
+                    etGlumciUFilmu.setText(l.get(0).getName());
+                else{
+                    String s = "";
+                    for(Actor actor : l){
+                        s += actor.getName() + " ";
+                    }
+                    s.substring(0, s.length() - 1);
+                    etGlumciUFilmu.setText(s);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        btnDeleteDatabase = (Button) findViewById(R.id.btnDeleteDatabase);
         btnDeleteDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -234,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        });*/
+        });
 
         /*btnFindActors = (Button) findViewById(R.id.btnActorsInMovie);
         btnFindActors.setOnClickListener(new View.OnClickListener() {
@@ -330,6 +430,7 @@ public class MainActivity extends AppCompatActivity {
 
         // attaching data adapter to spinner
         spnDirectors.setAdapter(dataAdapter);
+        spnIzborReditelja.setAdapter(dataAdapter);
     }
 
     void loadSpinnerDataMovies (ArrayList<Movie> al){
