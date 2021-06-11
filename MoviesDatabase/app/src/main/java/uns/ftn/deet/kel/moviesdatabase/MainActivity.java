@@ -131,6 +131,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!etImeGlumca.getText().toString().equals("") && !etDatumGlumca.getText().toString().equals("")) {
+                    if(la != null){
+                        for(Actor actor : la){
+                            if(actor.getName().equals(etImeGlumca.getText().toString())){
+                                Toast.makeText(MainActivity.this, "Glumac sa datim imenom vec postoji!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                    }
+
                     databaseHelper.createActor(new Actor(etImeGlumca.getText().toString(), etDatumGlumca.getText().toString()));
                     la = databaseHelper.getAllActors();
                     loadSpinnerDataActors((ArrayList<Actor>) la);
@@ -143,6 +152,15 @@ public class MainActivity extends AppCompatActivity {
         btnAzurirajGLumca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!glumac.getName().equals(etImeGlumca.getText().toString())) {
+                    for (Actor actor : la) {
+                        if (actor.getName().equals(etImeGlumca.getText().toString())) {
+                            Toast.makeText(MainActivity.this, "Glumac sa datim imenom vec postoji!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }
+
                 glumac.setName(etImeGlumca.getText().toString());
                 glumac.setBirthDate(etDatumGlumca.getText().toString());
                 databaseHelper.updateActor(glumac);
@@ -182,6 +200,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!etImeReditelja.getText().toString().equals("") && !etDatumReditelja.getText().toString().equals("")) {
+                    if(ld != null){
+                        for(Director director : ld){
+                            if(director.getName().equals(etImeReditelja.getText().toString())){
+                                Toast.makeText(MainActivity.this, "Reditelj sa datim imenom vec postoji!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                    }
+
                     databaseHelper.createDirector(new Director(etImeReditelja.getText().toString(), etDatumReditelja.getText().toString()));
                     ld = databaseHelper.getAllDirectors();
                     loadSpinnerDataDirectors((ArrayList<Director>) ld);
@@ -192,6 +219,15 @@ public class MainActivity extends AppCompatActivity {
         btnAzurirajReditelja.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!reditelj.getName().equals(etImeReditelja.getText().toString())) {
+                    for (Director director : ld) {
+                        if (director.getName().equals(etImeReditelja.getText().toString())) {
+                            Toast.makeText(MainActivity.this, "Reditelj sa datim imenom vec postoji!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }
+
                 reditelj.setName(etImeReditelja.getText().toString());
                 reditelj.setBirthDate(etDatumReditelja.getText().toString());
                 databaseHelper.updateDirector(reditelj);
@@ -231,6 +267,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!etImeFilma.getText().toString().equals("") && !etDatumFilma.getText().toString().equals("") && spnIzborReditelja.getSelectedItem() != null && !etGlumciUFilmu.getText().toString().equals("")){
+                    if(mv != null) {
+                        for (Movie movie : mv) {
+                            if (movie.getName().equals(etImeFilma.getText().toString())) {
+                                Toast.makeText(MainActivity.this, "Film sa datim imenom vec postoji!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                    }
+
                     Movie m = new Movie(etImeFilma.getText().toString(), etDatumFilma.getText().toString());
                     Director d = null;
                     for(Director director : ld){
@@ -242,8 +287,8 @@ public class MainActivity extends AppCompatActivity {
 
                     m.setDirector(d);
                     databaseHelper.createMovie(m);
-                    if(etGlumciUFilmu.getText().toString().contains(" ")){
-                        Pattern pattern = Pattern.compile(" ");
+                    if(etGlumciUFilmu.getText().toString().contains(",")){
+                        Pattern pattern = Pattern.compile(",");
                         Matcher matcher = pattern.matcher(etGlumciUFilmu.getText().toString());
                         int count = 0;
                         while (matcher.find()) {
@@ -256,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
                             if(i == count + 1)
                                 break;
 
-                            if(actor.getName().equals(etGlumciUFilmu.getText().toString().split(" ")[i])){
+                            if(actor.getName().equals(etGlumciUFilmu.getText().toString().split(",")[i])){
                                 m.addActor(actor);
                                 i++;
                             }
@@ -274,11 +319,77 @@ public class MainActivity extends AppCompatActivity {
 
                         databaseHelper.addActorsInMovie(m);
                     }
-                    etGlumciUFilmu.setText("");
+                    //etGlumciUFilmu.setText("");
 
                     mv = databaseHelper.getAllMovies();
                     loadSpinnerDataMovies((ArrayList<Movie>) mv);
                 }
+            }
+        });
+
+        btnAzurirajFilm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!film.getName().equals(etImeFilma.getText().toString())) {
+                    for (Movie movie : mv) {
+                        if (movie.getName().equals(etImeFilma.getText().toString())) {
+                            Toast.makeText(MainActivity.this, "Film sa datim imenom vec postoji!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }
+
+                film.setName(etImeFilma.getText().toString());
+                film.setReleaseDate(etDatumFilma.getText().toString());
+                Director d = null;
+                for(Director director : ld){
+                    if(director.getName().equals(spnIzborReditelja.getSelectedItem().toString())){
+                        d = director;
+                        break;
+                    }
+                }
+                film.setDirector(d);
+                databaseHelper.updateMovie(film);
+                film.getActors().clear();
+
+                if(etGlumciUFilmu.getText().toString().contains(",")){
+                    Pattern pattern = Pattern.compile(",");
+                    Matcher matcher = pattern.matcher(etGlumciUFilmu.getText().toString());
+                    int count = 0;
+                    while (matcher.find()) {
+                        count++;
+                    }
+
+                    int i = 0;
+
+                    for(Actor actor : la){
+                        if(i == count + 1)
+                            break;
+
+                        if(actor.getName().equals(etGlumciUFilmu.getText().toString().split(",")[i])){
+                            film.addActor(actor);
+                            i++;
+                        }
+                    }
+
+                    databaseHelper.updateActorsInMovie(film);
+                }
+                else{
+                    for(Actor actor : la){
+                        if(actor.getName().equals(etGlumciUFilmu.getText().toString())){
+                            film.addActor(actor);
+                            break;
+                        }
+                    }
+
+                    databaseHelper.updateActorsInMovie(film);
+                }
+
+                mv = databaseHelper.getAllMovies();
+                loadSpinnerDataMovies((ArrayList<Movie>) mv);
+                etImeFilma.setText("");
+                etDatumFilma.setText("");
+                etGlumciUFilmu.setText("");
             }
         });
 
@@ -309,9 +420,11 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     String s = "";
                     for(Actor actor : l){
-                        s += actor.getName() + " ";
+                        s += actor.getName() + ",";
                     }
-                    s.substring(0, s.length() - 1);
+                    if(!s.equals(""))
+                        s = s.substring(0, s.length() - 1);
+
                     etGlumciUFilmu.setText(s);
                 }
             }

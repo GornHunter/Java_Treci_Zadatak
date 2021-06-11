@@ -180,6 +180,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void updateActorsInMovie(Movie movie){
+        db.delete(TABLE_MOVIE_ACTORS, KEY_MOVIE_ID + " = ?",
+                new String[] { String.valueOf(movie.getId()) });
+
+        //read all actors for a given movie and for each actor insert a row in a table movie_actors
+        for (Actor actor : movie.getActors()){
+            ContentValues values = new ContentValues();
+            values.put(KEY_MOVIE_ID, movie.getId());
+            values.put(KEY_ACTOR_ID, actor.getId());
+            // insert row
+            db.insert(TABLE_MOVIE_ACTORS, null, values);
+        }
+    }
+
 
     /*
      * get single actor like
@@ -206,28 +220,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ac;
     }
 
-    public Actor getActor(String actor_name) {
-
-        String selectQuery = "SELECT * FROM " + TABLE_ACTORS + " WHERE "
-                + KEY_NAME + " = " + actor_name;
-
-        Log.e(LOG, selectQuery);
-
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        if (c != null)
-            c.moveToFirst();
-
-        //create actor based on data read from a database
-        Actor ac = new Actor();
-        ac.setId(c.getInt(c.getColumnIndex(KEY_ID)));
-        ac.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-        ac.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
-
-        return ac;
-    }
-
-
     /*
      * Updating an Actor using data in an object actor
      */
@@ -253,16 +245,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(director.getId()) });
     }
 
+    public int updateMovie(Movie movie){
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, movie.getName());
+        values.put(KEY_DIRECTOR_ID, movie.getDirector().getId());
+        values.put(KEY_RELEASEDATE, movie.getReleaseDate());
+
+        // updating row
+        return db.update(TABLE_MOVIES, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(movie.getId()) });
+    }
+
     /*
      * Deleting an Actor using actor id
      */
     public void deleteActor(long actor_id) {
+        db.delete(TABLE_MOVIE_ACTORS, KEY_ACTOR_ID + " = ?",
+                new String[] { String.valueOf(actor_id)});
 
         db.delete(TABLE_ACTORS, KEY_ID + " = ?",
                 new String[] { String.valueOf(actor_id) });
     }
 
     public void deleteDirector(long director_id){
+        Director d = getDirector(director_id);
+        String selectQuery = "SELECT m." + KEY_ID + ", m." + KEY_NAME + " FROM movies m, directors d" +
+                "where d." + KEY_ID + " = m." + KEY_DIRECTOR_ID + " AND d." + KEY_NAME + " LIKE '" + d.getName() + "'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                long movie_id = c.getInt(c.getColumnIndex(KEY_ID));
+                Movie m = getMovie(movie_id);
+                //nastaviti...
+                //actors.add(a);
+            } while (c.moveToNext());
+        }
+
         db.delete(TABLE_DIRECTORS, KEY_ID + " = ?",
                 new String[] { String.valueOf(director_id) });
     }
@@ -284,26 +308,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String selectQuery = "SELECT * FROM " + TABLE_DIRECTORS + " WHERE "
                 + KEY_ID + " = " + director_id;
-
-        Log.e(LOG, selectQuery);
-
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        if (c != null)
-            c.moveToFirst();
-
-        Director d = new Director();
-        d.setId(c.getInt(c.getColumnIndex(KEY_ID)));
-        d.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-        d.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
-
-        return d;
-    }
-
-    public Director getDirector(String director_name) {
-
-        String selectQuery = "SELECT * FROM " + TABLE_DIRECTORS + " WHERE "
-                + KEY_NAME + " = " + director_name;
 
         Log.e(LOG, selectQuery);
 
@@ -414,7 +418,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String selectQuery = "SELECT a." + KEY_ID + ", m." + KEY_NAME + " FROM " + TABLE_ACTORS + " a, "
                 + TABLE_MOVIES + " m, " + TABLE_MOVIE_ACTORS + " ma WHERE UPPER(m."
-                + KEY_NAME + ") LIKE '" + movieName.toUpperCase() + "%'" + " AND m." + KEY_ID
+                + KEY_NAME + ") LIKE '" + movieName.toUpperCase() + "'" + " AND m." + KEY_ID
                 + " = " + "ma." + KEY_MOVIE_ID + " AND a." + KEY_ID
                 + " = " + "ma." + KEY_ACTOR_ID;
 
