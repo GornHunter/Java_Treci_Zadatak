@@ -9,6 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -19,14 +20,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="ime glumca"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/etGlumacDatumRodjenja"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="datum rodjenja glumca"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <Button
                 android:id="@+id/btnGlumac"
@@ -66,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="ime reditelja"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/etRediteljDatumRodjenja"
@@ -113,14 +114,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="ime filma"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/etDatumIzlaskaFilma"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="datum izlaska filma"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <Spinner
                 android:id="@+id/spnReditelji"
@@ -133,7 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="glumci u filmu"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <Button
                 android:id="@+id/btnFilm"
@@ -167,6 +168,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="68dp" />
+
+            <Spinner
+                android:id="@+id/spnOpcije"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10px"/>
+
+            <EditText
+                android:id="@+id/etTekst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Unesite tekst"
+                android:inputType="text"
+                android:layout_marginBottom="20px"/>
+
+            <Button
+                android:id="@+id/btnPretraga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="68dp"
+                android:text="Pretraga" />
 
             <Button
                 android:id="@+id/btnDeleteDatabase"

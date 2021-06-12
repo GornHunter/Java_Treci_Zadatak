@@ -270,7 +270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteDirector(long director_id){
         Director d = getDirector(director_id);
-        String selectQuery = "SELECT m." + KEY_ID + ", m." + KEY_NAME + " FROM movies m, directors d" +
+        String selectQuery = "SELECT m." + KEY_ID + " FROM movies m, directors d " +
                 "where d." + KEY_ID + " = m." + KEY_DIRECTOR_ID + " AND d." + KEY_NAME + " LIKE '" + d.getName() + "'";
 
         Log.e(LOG, selectQuery);
@@ -281,9 +281,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 long movie_id = c.getInt(c.getColumnIndex(KEY_ID));
-                Movie m = getMovie(movie_id);
-                //nastaviti...
-                //actors.add(a);
+                //Movie m = getMovie(movie_id);
+                db.delete(TABLE_MOVIE_ACTORS, KEY_MOVIE_ID + " = ?",
+                        new String[] { String.valueOf(movie_id) });
+                db.delete(TABLE_MOVIES, KEY_ID + " = ?",
+                        new String[] { String.valueOf(movie_id) });
             } while (c.moveToNext());
         }
 
@@ -352,6 +354,156 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return m;
     }
 
+    public ArrayList<Actor> getActorsByName(String actor_name){
+        ArrayList<Actor> actors = new ArrayList<Actor>();
+        String selectQuery = "SELECT * FROM " + TABLE_ACTORS + " WHERE " + KEY_NAME + " LIKE '" + actor_name + "%'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Actor a = new Actor();
+                a.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                a.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+                a.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
+
+                // adding to todo list
+                actors.add(a);
+            } while (c.moveToNext());
+        }
+
+        return actors;
+    }
+
+    public ArrayList<Director> getDirectorsByName(String director_name){
+        ArrayList<Director> directors = new ArrayList<Director>();
+        String selectQuery = "SELECT * FROM " + TABLE_DIRECTORS + " WHERE " + KEY_NAME + " LIKE '" + director_name + "%'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Director d = new Director();
+                d.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                d.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+                d.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
+
+                // adding to todo list
+                directors.add(d);
+            } while (c.moveToNext());
+        }
+
+        return directors;
+    }
+
+    public ArrayList<Movie> getMoviesByName(String movie_name){
+        ArrayList<Movie> movies = new ArrayList<Movie>();
+        String selectQuery = "SELECT * FROM " + TABLE_MOVIES + " WHERE " + KEY_NAME + " LIKE '" + movie_name + "%'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Movie m = new Movie();
+                m.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                m.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+                Director d = getDirector(c.getInt(c.getColumnIndex(KEY_DIRECTOR_ID)));
+                m.setDirector(d);
+                m.setReleaseDate(c.getString(c.getColumnIndex(KEY_RELEASEDATE)));
+
+                // adding to todo list
+                movies.add(m);
+            } while (c.moveToNext());
+        }
+
+        return movies;
+    }
+
+    public Director getDirectorByMovie(String movie_name){
+        String selectQuery = "SELECT d." + KEY_ID + ", d." + KEY_NAME + ", d." + KEY_BIRTHDATE + " FROM " + TABLE_DIRECTORS + " d, " + TABLE_MOVIES + " m " + " WHERE d."
+                + KEY_ID + " = m." + KEY_DIRECTOR_ID + " AND m." + KEY_NAME + " = '" + movie_name + "'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        Director d = new Director();
+        d.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+        d.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+        d.setBirthDate(c.getString(c.getColumnIndex(KEY_BIRTHDATE)));
+
+        return d;
+    }
+
+    //select m.id, m.name, m.release_date from movie_actors ma, movies m, actors a
+    //where ma.movie_id = m.id and a.id = ma.actor_id and a.name = 'ime'
+    public ArrayList<Movie> getMoviesByActor(String actor_name){
+        ArrayList<Movie> movies = new ArrayList<Movie>();
+        String selectQuery = "SELECT m." + KEY_ID + ", m." + KEY_NAME + ", m." + KEY_DIRECTOR_ID + ", m." + KEY_RELEASEDATE + " FROM " + TABLE_MOVIE_ACTORS + " ma, " + TABLE_MOVIES + " m, " +
+                TABLE_ACTORS + " a WHERE ma." + KEY_MOVIE_ID + " = m." + KEY_ID + " AND a." + KEY_ID + " = ma." + KEY_ACTOR_ID + " AND a." + KEY_NAME + " = '" + actor_name + "'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Movie m = new Movie();
+                m.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                m.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+                Director d = getDirector(c.getInt(c.getColumnIndex(KEY_DIRECTOR_ID)));
+                m.setDirector(d);
+                m.setReleaseDate(c.getString(c.getColumnIndex(KEY_RELEASEDATE)));
+
+                // adding to todo list
+                movies.add(m);
+            } while (c.moveToNext());
+        }
+
+        return movies;
+    }
+
+    //select m.id, m.name, m.director_id, m.release_date from movies m, directors d where
+    //m.director_id = d.id and d.name = 'quentin'
+    public ArrayList<Movie> getMoviesByDirector(String director_name){
+        ArrayList<Movie> movies = new ArrayList<Movie>();
+        String selectQuery = "SELECT m." + KEY_ID + ", m." + KEY_NAME + ", m." + KEY_DIRECTOR_ID + ", m." + KEY_RELEASEDATE + " FROM " + TABLE_MOVIES + " m, " +
+                TABLE_DIRECTORS + " d WHERE m." + KEY_DIRECTOR_ID + " = d." + KEY_ID + " AND d." + KEY_NAME + " = '" + director_name + "'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Movie m = new Movie();
+                m.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                m.setName((c.getString(c.getColumnIndex(KEY_NAME))));
+                Director d = getDirector(c.getInt(c.getColumnIndex(KEY_DIRECTOR_ID)));
+                m.setDirector(d);
+                m.setReleaseDate(c.getString(c.getColumnIndex(KEY_RELEASEDATE)));
+
+                // adding to todo list
+                movies.add(m);
+            } while (c.moveToNext());
+        }
+
+        return movies;
+    }
 
     /*
      * getting all actors

@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -55,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
     Button btnDeleteDatabase;
     Button btnFindActors;
     Button btnRestoreDatabase;
+
+    Spinner spnOpcije;
+    EditText etTekst;
+    Button btnPretraga;
 
     List<Actor> la;
     List<Director> ld;
@@ -106,6 +111,25 @@ public class MainActivity extends AppCompatActivity {
         btnDodajFilm = (Button) findViewById(R.id.btnFilm);
         btnAzurirajFilm = (Button) findViewById(R.id.btnAzurirajFilm);
         btnIzbrisiFilm = (Button) findViewById(R.id.btnIzbrisiFilm);
+
+        spnOpcije = (Spinner) findViewById(R.id.spnOpcije);
+        etTekst = (EditText) findViewById(R.id.etTekst);
+        btnPretraga = (Button) findViewById(R.id.btnPretraga);
+
+        ArrayList<String> opcije = new ArrayList<>();
+        opcije.add("glumac po imenu");
+        opcije.add("reditelj po imenu");
+        opcije.add("film po imenu");
+        opcije.add("glumci po filmu");
+        opcije.add("reziser po filmovima");
+        opcije.add("filmovi po glumcima");
+        opcije.add("filmovi po rediteljima");
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, opcije);
+
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spnOpcije.setAdapter(dataAdapter);
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
         databaseHelper.createTables();
@@ -177,6 +201,22 @@ public class MainActivity extends AppCompatActivity {
                 databaseHelper.deleteActor(glumac.getId());
                 la = databaseHelper.getAllActors();
                 loadSpinnerDataActors((ArrayList<Actor>) la);
+
+                List<Actor> l = databaseHelper.getAllActorsInMovie(film.getName());
+
+                if(l.size() == 1)
+                    etGlumciUFilmu.setText(l.get(0).getName());
+                else{
+                    String s = "";
+                    for(Actor actor : l){
+                        s += actor.getName() + ",";
+                    }
+                    if(!s.equals(""))
+                        s = s.substring(0, s.length() - 1);
+
+                    etGlumciUFilmu.setText(s);
+                }
+
                 etImeGlumca.setText("");
                 etDatumGlumca.setText("");
             }
@@ -244,6 +284,8 @@ public class MainActivity extends AppCompatActivity {
                 databaseHelper.deleteDirector(reditelj.getId());
                 ld = databaseHelper.getAllDirectors();
                 loadSpinnerDataDirectors((ArrayList<Director>) ld);
+                mv = databaseHelper.getAllMovies();
+                loadSpinnerDataMovies((ArrayList<Movie>) mv);
                 etImeReditelja.setText("");
                 etDatumReditelja.setText("");
             }
@@ -435,7 +477,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnDeleteDatabase = (Button) findViewById(R.id.btnDeleteDatabase);
+        btnPretraga.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(spnOpcije.getSelectedItem().toString().equals("glumac po imenu")){
+                    la = databaseHelper.getActorsByName(etTekst.getText().toString());
+                    loadSpinnerDataActors((ArrayList<Actor>) la);
+                }
+                else if(spnOpcije.getSelectedItem().toString().equals("reditelj po imenu")){
+                    ld = databaseHelper.getDirectorsByName(etTekst.getText().toString());
+                    loadSpinnerDataDirectors((ArrayList<Director>) ld);
+                }
+                else if(spnOpcije.getSelectedItem().toString().equals("film po imenu")){
+                    mv = databaseHelper.getMoviesByName(etTekst.getText().toString());
+                    loadSpinnerDataMovies((ArrayList<Movie>) mv);
+                }
+                else if(spnOpcije.getSelectedItem().toString().equals("glumci po filmu")){
+                    la = databaseHelper.getAllActorsInMovie(etTekst.getText().toString());
+                    loadSpinnerDataActors((ArrayList<Actor>) la);
+                }
+                else if(spnOpcije.getSelectedItem().toString().equals("reziser po filmovima")){
+                    ld.clear();
+                    Director d = databaseHelper.getDirectorByMovie(etTekst.getText().toString());
+                    ld.add(d);
+                    loadSpinnerDataDirectors((ArrayList<Director>) ld);
+                }
+                else if(spnOpcije.getSelectedItem().toString().equals("filmovi po glumcima")){
+                    mv = databaseHelper.getMoviesByActor(etTekst.getText().toString());
+                    loadSpinnerDataMovies((ArrayList<Movie>) mv);
+                }
+                else{
+                    mv = databaseHelper.getMoviesByDirector(etTekst.getText().toString());
+                    loadSpinnerDataMovies((ArrayList<Movie>) mv);
+                }
+            }
+        });
+
+        /*btnDeleteDatabase = (Button) findViewById(R.id.btnDeleteDatabase);
         btnDeleteDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -447,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
 
         /*btnFindActors = (Button) findViewById(R.id.btnActorsInMovie);
         btnFindActors.setOnClickListener(new View.OnClickListener() {
@@ -474,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
         //createTablesAndInitData();
     }
 
-    void createTablesAndInitData(){
+    /*void createTablesAndInitData(){
         databaseHelper.createTables();
 
         if (databaseHelper.getAllActors().size() == 0) {
@@ -513,7 +591,7 @@ public class MainActivity extends AppCompatActivity {
         loadSpinnerDataDirectors((ArrayList<Director>) ld);
         List<Movie> mv = databaseHelper.getAllMovies();
         loadSpinnerDataMovies((ArrayList<Movie>) mv);
-    }
+    }*/
 
     void loadSpinnerDataActors (ArrayList<Actor> al){
         ArrayList<String> actornames = new ArrayList<>();
